@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fake News Language Pattern Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-area">
+        <span class="badge">Project 08</span>
+        <h1>Fake News Language Pattern Analyzer</h1>
+      </div>
+      <p class="tagline">Stylistic linguistic analysis for sensationalism, unsupported certainty, clickbait phrases, and emotional rhetoric.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Mandatory Critical Reading & Fact-Checking Disclaimer -->
+    <aside class="notice-banner" role="note">
+      <span class="notice-icon">&#9888;</span>
+      <div>
+        <strong>Critical Media Literacy Notice:</strong> This tool analyzes writing style and linguistic indicators of sensationalism. It does <em>not</em> verify empirical facts or determine whether an article is definitively true or false. Factual verification requires consulting authoritative primary sources and independent evidence.
+      </div>
+    </aside>
+
+    <!-- Article Input Card -->
+    <section class="card editor-card">
+      <div class="card-header">
+        <label for="articleInput" class="section-title">Enter or Paste News Article Text</label>
+        <div class="sample-actions">
+          <span class="sample-label">Load Sample:</span>
+          <button id="sampleSensationalBtn" class="pill-btn pill-sensational" title="Load Sensational Clickbait Article">Sensational Sample</button>
+          <button id="sampleBalancedBtn" class="pill-btn pill-balanced" title="Load Objective Scientific Report">Balanced Report</button>
+        </div>
+      </div>
+
+      <div class="textarea-wrapper">
+        <textarea 
+          id="articleInput" 
+          placeholder="Paste news headline and body text here to inspect linguistic sensationalism indicators (e.g., hyperbole, ALL-CAPS words, exaggerated certainty, and emotional rhetoric)..." 
+          rows="9"
+          spellcheck="false"
+        ></textarea>
+      </div>
+
+      <div id="statusAlert" class="status-alert hidden" role="alert"></div>
+
+      <div class="toolbar">
+        <div class="btn-group">
+          <button id="analyzeBtn" class="btn btn-primary">
+            <span class="btn-icon">&#128269;</span> Analyze Article Language
+          </button>
+          <button id="clearBtn" class="btn btn-outline">
+            <span class="btn-icon">&#10006;</span> Clear
+          </button>
+        </div>
+        <div class="live-counter" id="liveWordCount">0 words | 0 sentences</div>
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <section id="emptyState" class="card empty-state">
+      <div class="empty-icon">&#128240;</div>
+      <h3>Ready to Inspect Article Language</h3>
+      <p>Paste a news article above or choose one of the sample buttons to detect sensational wording, excessive punctuation, and unsupported claims.</p>
+    </section>
+
+    <!-- Results Section -->
+    <section id="resultsSection" class="results-section hidden">
+      <!-- Sensationalism Indicator Score Overview Card -->
+      <div class="card score-card">
+        <div class="score-header">
+          <div class="rating-info">
+            <span class="rating-label">Sensationalism Indicator Level:</span>
+            <div id="ratingBadge" class="rating-badge rating-high">High Sensationalism</div>
+          </div>
+          <div class="score-box">
+            <span class="score-title">Indicator Index</span>
+            <div class="score-val-row">
+              <span id="scoreValue" class="score-number">78</span>
+              <span class="score-max">/ 100</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meter Bar -->
+        <div class="meter-track">
+          <div id="meterFill" class="meter-fill fill-high" style="width: 78%;"></div>
+        </div>
+        <div class="meter-legend">
+          <span>0 (Balanced &amp; Measured)</span>
+          <span>35 (Moderate Markers)</span>
+          <span>65+ (High Sensationalism)</span>
+          <span>100</span>
+        </div>
+
+        <div class="score-disclaimer">
+          <small>Note: This score reflects rhetorical intensity and hyperbolic style, not a mathematical probability of falsehood.</small>
+        </div>
+      </div>
+
+      <!-- Metrics Breakdown Grid -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Sensational Phrases</span>
+          <span class="metric-val" id="countSensational">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Unsupported Certainty</span>
+          <span class="metric-val" id="countCertainty">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Emotional Outrage Words</span>
+          <span class="metric-val" id="countEmotional">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">ALL-CAPS Tokens</span>
+          <span class="metric-val" id="countAllCaps">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Excessive Punctuation</span>
+          <span class="metric-val" id="countPunctuation">0</span>
+        </div>
+      </div>
+
+      <!-- Highlighted Article View -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="section-title">Highlighted Language Patterns</h3>
+          <div class="legend-chips">
+            <span class="chip chip-sensational">Sensational Phrase</span>
+            <span class="chip chip-certainty">Unsupported Certainty</span>
+            <span class="chip chip-emotional">Emotional Word</span>
+            <span class="chip chip-caps">ALL-CAPS</span>
+            <span class="chip chip-punct">Excessive Punctuation</span>
+          </div>
+        </div>
+        <div id="highlightedView" class="highlighted-view"></div>
+      </div>
+
+      <!-- Detected Patterns & Explanations List -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="section-title">Detected Linguistic Patterns (<span id="totalPatternsCount">0</span>)</h3>
+        </div>
+        <div id="patternsBreakdownList" class="patterns-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Critical Reading Checklist Card -->
+      <div class="card checklist-card">
+        <div class="card-header">
+          <h3 class="section-title">&#9745; Critical-Reading Verification Checklist</h3>
+          <span class="sub-hint">Questions every reader must evaluate before sharing</span>
+        </div>
+        <ul class="checklist-items">
+          <li class="check-item">
+            <input type="checkbox" id="chk1" />
+            <label for="chk1"><strong>Source Identification:</strong> Does the article clearly name the author, publication, and primary organizational sources?</label>
+          </li>
+          <li class="check-item">
+            <input type="checkbox" id="chk2" />
+            <label for="chk2"><strong>Supporting Evidence:</strong> Are verifiable citations, peer-reviewed studies, or official public data provided for major claims?</label>
+          </li>
+          <li class="check-item">
+            <input type="checkbox" id="chk3" />
+            <label for="chk3"><strong>Headline Alignment:</strong> Does the article body substantiate the headline, or is the headline sensationalized clickbait?</label>
+          </li>
+          <li class="check-item">
+            <input type="checkbox" id="chk4" />
+            <label for="chk4"><strong>Alternative Perspectives:</strong> Does the piece present multiple balanced perspectives and acknowledge limitations or uncertainties?</label>
+          </li>
+          <li class="check-item">
+            <input type="checkbox" id="chk5" />
+            <label for="chk5"><strong>Cross-Verification:</strong> Have reputable, independent news agencies corroborated the core events described?</label>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="container footer-content">
+      <p>Text &amp; Speech Analysis Laboratory &bull; Project 08: Fake News Language Pattern Analyzer</p>
+      <p class="footer-meta">Stylistic heuristics &bull; Educational media literacy &bull; Client-side vanilla JS</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
